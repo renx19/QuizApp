@@ -1,0 +1,27 @@
+.radio-container {
+    display: flex;
+    align-items: center;
+    margin-left: 20px; /* Adjust spacing as needed */
+}
+
+.radio-input {
+    appearance: none; /* Remove default styles */
+    width: 20px;
+    height: 20px;
+    margin-right: 10px; /* Space between button and label */
+    border: 2px solid #ccc; /* Default border color */
+    border-radius: 4px; /* Rounded square */
+    background-color: white;
+    cursor: pointer;
+    position: relative;
+    transition: background-color 0.2s, border-color 0.2s;
+}
+
+.radio-input:hover {
+    border-color: #007bff; /* Highlight border on hover */
+}
+
+.radio-input:checked {
+    border-color: #007bff; /* Change border when selected */
+    background-color: #007bff
+}
