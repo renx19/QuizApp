@@ -5,7 +5,7 @@ export default defineConfig({
     plugins: [react()],
     build: {
         // Increase the chunk size warning limit
-        chunkSizeWarningLimit: 2000, // Size in kB (adjust as needed)
+        chunkSizeWarningLimit: 3000, // Size in kB (adjust as needed)
 
         rollupOptions: {
             output: {
