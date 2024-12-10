@@ -1,7 +1,7 @@
 import { create } from 'zustand';
 import { persist, createJSONStorage } from 'zustand/middleware';
-import { loadQuestions } from '../utils/loadQuestions'; // Import utility function
-import { processQuestions } from '../utils/shuffleQuestions'; // Import the shuffle function
+import axios from 'axios'; // Import Axios to make API calls
+import { processQuestions } from '../utils/shuffleQuestions'; // Shuffle function
 
 export const useQuizStore = create(
     persist(
@@ -44,47 +44,68 @@ export const useQuizStore = create(
                     quizType: {},
                 }),
 
-            // Fetch questions based on selected subject
-            // Fetch questions based on selected subject
+            // Fetch questions based on selected subject from API
             fetchQuestions: async (subject) => {
                 const { quizSettings } = get(); // Get current quizSettings from state
 
-                // Load questions for the selected subject
-                const allQuestions = loadQuestions(subject);
+                try {
+                    // Make the API call to fetch questions for the subject
+                    const response = await axios.get('http://localhost:3000/questions', {
+                        params: { subject },
+                        withCredentials: true, // Ensure cookies are sent if needed
+                    });
 
-                // Filter questions based on type
-                const selectedType = quizSettings?.quizType;
-                console.log('Selected Type:', selectedType);
-                console.log('All Questions Types:', allQuestions.map((q) => q.type));
+                    const allQuestions = response.data.exam?.questions || [];
 
-                const filteredQuestions = selectedType
-                    ? allQuestions.filter((question) => {
-                        console.log('Question Type:', question.type);  // Log question type
-                        return question.type === selectedType;
-                    })
-                    : allQuestions;
+                    // Check if 'questions' is an array
+                    if (!Array.isArray(allQuestions)) {
+                        console.error('Expected an array of questions but received:', allQuestions);
+                        return;
+                    }
 
-                console.log('Filtered Questions:', filteredQuestions);  // Log filtered questions
+                    // Filter questions based on quiz type
+                    const selectedType = quizSettings?.quizType;
+                    console.log('Selected Type:', selectedType);
+                    console.log('All Questions Types:', allQuestions.map((q) => q.type));
 
+                    const filteredQuestions = selectedType
+                        ? allQuestions.filter((question) => question.type === selectedType)
+                        : allQuestions;
 
-                // Check if shuffling is enabled
-                const isShuffleEnabled = quizSettings?.isShuffled === true || quizSettings?.isShuffled === 'True';
+                    console.log('Filtered Questions:', filteredQuestions);
 
-                // Shuffle if enabled
-                const processedQuestions = isShuffleEnabled ? processQuestions(filteredQuestions) : [...filteredQuestions];
+                    // Check if shuffling is enabled
+                    const isShuffleEnabled = quizSettings?.isShuffled === true || quizSettings?.isShuffled === 'True';
 
-                // Update state with processed questions
-                set({ questions: processedQuestions });
+                    // Shuffle if enabled
+                    const processedQuestions = isShuffleEnabled
+                        ? processQuestions(filteredQuestions)
+                        : [...filteredQuestions];
 
-                // Set correct answers
-                const correctAnswers = processedQuestions.reduce((acc, question) => {
-                    acc[question.id] = question.correctAnswer; // Use `correctAnswer` as defined in `loadQuestions`
-                    return acc;
-                }, {});
+                    // Map the raw questions to include the correct questionText property
+                    const mappedQuestions = processedQuestions.map((question) => ({
+                        id: question.id,
+                        type: question.type,
+                        questionText: question.question, // Assuming 'question' is the property in the API
+                        options: question.options,
+                        correctAnswer: question.answer,
+                        explanation: question.explanation,
+                    }));
 
-                set({ correctAnswers });
+                    // Update state with processed questions
+                    set({ questions: mappedQuestions });
+
+                    // Set correct answers
+                    const correctAnswers = mappedQuestions.reduce((acc, question) => {
+                        acc[question.id] = question.correctAnswer; // Assuming `correctAnswer` is in your question
+                        return acc;
+                    }, {});
+
+                    set({ correctAnswers });
+                } catch (error) {
+                    console.error('Error fetching questions:', error);
+                }
             },
-
 
         }),
         {
@@ -93,3 +114,4 @@ export const useQuizStore = create(
         }
     )
 );
+
