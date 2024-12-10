@@ -1,16 +1,36 @@
 const express = require('express');
 const path = require('path');
+const https = require('https');
 const app = express();
 const cors = require('cors');
 
+// Keep-alive function to ping the server
+const keepAlive = () => {
+    const url = 'https://quiz-app-api-smye.onrender.com'; // URL for your Render app
 
+    https.get(url, (res) => {
+        console.log('Keep-alive ping successful', res.statusCode);
+    }).on('error', (e) => {
+        console.error('Keep-alive ping failed', e);
+    });
+};
 
+// Set up keep-alive interval (every 5 minutes)
+setInterval(keepAlive, 5 * 60 * 1000);
+
+// Enable CORS for your frontend
 app.use(cors({
     origin: 'http://localhost:5173', // Frontend origin
     credentials: true, // Allow cookies to be sent
 }));
 
-
+// API root entry point for welcome message
+app.get('/', (req, res) => {
+    res.json({
+        message: 'Welcome to the Quiz App API!',
+        status: 'API is running',
+    });
+});
 
 // Serve static files from the "json" directory
 app.use('/data', express.static(path.join(__dirname, 'json')));
