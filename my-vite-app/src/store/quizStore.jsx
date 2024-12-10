@@ -50,7 +50,7 @@ export const useQuizStore = create(
 
                 try {
                     // Make the API call to fetch questions for the subject
-                    const response = await axios.get('http://localhost:3000/questions', {
+                    const response = await axios.get('https://quiz-app-api-smye.onrender.com/questions', {
                         params: { subject },
                         withCredentials: true, // Ensure cookies are sent if needed
                     });

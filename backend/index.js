@@ -20,9 +20,13 @@ setInterval(keepAlive, 5 * 60 * 1000);
 
 // Enable CORS for your frontend
 app.use(cors({
-    origin: 'http://localhost:5173', // Frontend origin
+    origin: [
+        'http://localhost:5173', // Local frontend
+        'https://quizapp-nzt2.onrender.com' // Production frontend
+    ],
     credentials: true, // Allow cookies to be sent
 }));
+
 
 // API root entry point for welcome message
 app.get('/', (req, res) => {
