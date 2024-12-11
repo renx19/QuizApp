@@ -31,7 +31,7 @@ const QuizPanel = () => {
     const currentMode = useColorMode(); // To check the current mode if needed
 
     const numberOptions = ['10', '20', '30', '40', '50', '100', '200', '300', '400', '500'];
-    const subjects = ['Clinical Chemistry', 'Clinical Microscopy', 'Hematology', 'Medtech Laws', 'Microbiology'];
+    const subjects = ['Clinical Chemistry', 'Clinical Microscopy', 'IBSS', 'Hematology', 'Medtech Laws', 'Microbiology'];
     const quizTypes = [
         { label: 'Multiple Choice', value: 'multiple_choice' },
         { label: 'True/False', value: 'true_false' },
