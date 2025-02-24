@@ -3,7 +3,6 @@ import { persist, createJSONStorage } from 'zustand/middleware';
 import axios from 'axios'; // Import Axios to make API calls
 import { processQuestions } from '../utils/shuffleQuestions'; // Shuffle function
 
-const API_URL = import.meta.env.VITE_QUIZ_API_URL;
 export const useQuizStore = create(
     persist(
         (set, get) => ({
@@ -51,7 +50,7 @@ export const useQuizStore = create(
 
                 try {
                     // Make the API call to fetch questions for the subject
-                    const response = await axios.get(`${API_URL}/questions`, {
+                    const response = await axios.get(`https://quiz-app-api-smye.onrender.com/questions`, {
                         params: { subject },
                         withCredentials: true, // Ensure cookies are sent if needed
                     });
