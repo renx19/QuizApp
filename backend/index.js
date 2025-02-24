@@ -3,6 +3,18 @@ const path = require('path');
 const https = require('https');
 const app = express();
 const cors = require('cors');
+const dotenv = require('dotenv');
+
+dotenv.config();
+
+
+const allowedOrigins = process.env.ALLOWED_ORIGINS ?
+    process.env.ALLOWED_ORIGINS.split(',') : [];
+
+app.use(cors({
+    origin: allowedOrigins,
+    credentials: true,
+}));
 
 // Keep-alive function to ping the server
 const keepAlive = () => {
@@ -19,13 +31,13 @@ const keepAlive = () => {
 setInterval(keepAlive, 5 * 60 * 1000);
 
 // Enable CORS for your frontend
-app.use(cors({
-    origin: [
-        'http://localhost:5173', // Local frontend
-        'https://quizapp-nzt2.onrender.com' // Production frontend
-    ],
-    credentials: true, // Allow cookies to be sent
-}));
+// app.use(cors({
+//     origin: [
+//         'http://localhost:5173', // Local frontend
+//         'https://quizapp-nzt2.onrender.com' // Production frontend
+//     ],
+//     credentials: true, // Allow cookies to be sent
+// }));
 
 
 // API root entry point for welcome message
