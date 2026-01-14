@@ -50,10 +50,15 @@ export const useQuizStore = create(
 
                 try {
                     // Make the API call to fetch questions for the subject
-                    const response = await axios.get(`https://quiz-app-api-smye.onrender.com/questions`, {
-                        params: { subject },
-                        withCredentials: true, // Ensure cookies are sent if needed
-                    });
+                    const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
+
+                    const response = await axios.get(
+                        `${API_BASE_URL}/questions`,
+                        {
+                            params: { subject },
+                            withCredentials: true,
+                        }
+                    );
 
                     const allQuestions = response.data.exam?.questions || [];
 
