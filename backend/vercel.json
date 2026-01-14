@@ -5,7 +5,14 @@
       "src": "index.js",
       "use": "@vercel/node",
       "config": {
-        "includeFiles": "json/**"
+        "includeFiles": [
+          "json/ClinicalChemistry.json",
+          "json/ClinicalMicroscopy.json",
+          "json/IBSS.json",
+          "json/Hematology.json",
+          "json/MedtechLaws.json",
+          "json/Microbiology.json"
+        ]
       }
     }
   ],

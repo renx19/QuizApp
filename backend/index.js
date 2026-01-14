@@ -5,7 +5,7 @@ const questionsRouter = require("./routes/data");
 const path = require("path");
 
 // Use path.join to get the folder path
-const JSON_DIR = path.join(__dirname, "json"); // <-- correct
+const JSON_DIR = path.resolve(process.cwd(), "json");
 
 
 
