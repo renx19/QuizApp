@@ -11,20 +11,38 @@ router.use("/data", express.static(JSON_DIR));
 
 // /questions endpoint
 router.get("/", (req, res) => {
-  const subject = req.query.subject;
+  let subject = req.query.subject;
+
+  if (!subject) {
+    return res.status(400).json({ error: "Subject is required" });
+  }
+
+  // Normalize
+  subject = decodeURIComponent(subject)
+    .toLowerCase()
+    .replace(/\+/g, " ")
+    .trim();
+
   const subjects = {
-    "Clinical Chemistry": "ClinicalChemistry.json",
-    "Clinical Microscopy": "ClinicalMicroscopy.json",
-    IBSS: "IBSS.json",
-    Hematology: "Hematology.json",
-    "Medtech Laws": "MedtechLaws.json",
-    Microbiology: "Microbiology.json",
+    "clinical chemistry": "ClinicalChemistry.json",
+    "clinical microscopy": "ClinicalMicroscopy.json",
+    "ibss": "IBSS.json",
+    "hematology": "Hematology.json",
+    "medtech laws": "MedtechLaws.json",
+    "microbiology": "Microbiology.json",
   };
 
   const fileName = subjects[subject];
-  if (!fileName) return res.status(404).json({ error: "Subject not found" });
+
+  if (!fileName) {
+    return res.status(404).json({
+      error: "Subject not found",
+      received: subject,
+    });
+  }
 
   const filePath = path.join(JSON_DIR, fileName);
+
   res.sendFile(filePath, (err) => {
     if (err) {
       console.error(err);
@@ -32,5 +50,6 @@ router.get("/", (req, res) => {
     }
   });
 });
+
 
 module.exports = router;

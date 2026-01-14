@@ -50,7 +50,7 @@ export const useQuizStore = create(
 
                 try {
                     // Make the API call to fetch questions for the subject
-                  
+                    const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
 
                     const response = await axios.get(
                         `${API_BASE_URL}/questions`,
