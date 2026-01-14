@@ -19,7 +19,7 @@ app.get("/", (req, res) => {
 });
 
 // Use the questions router
-app.use("/", questionsRouter);
+app.use("/questions", questionsRouter);
 
 // Start locally if not serverless
 
