@@ -1,15 +1,10 @@
-// routes/questions.js
 const express = require("express");
 const path = require("path");
+const fs = require("fs");
 const router = express.Router();
 
-// Directory for JSON files
-const JSON_DIR = process.env.JSON_DIR || path.join(__dirname, "../json");
+const JSON_DIR = path.resolve(process.cwd(), "json");
 
-// Serve static JSON files (optional, if you want direct /data access)
-router.use("/data", express.static(JSON_DIR));
-
-// /questions endpoint
 router.get("/", (req, res) => {
   let subject = req.query.subject;
 
@@ -17,39 +12,35 @@ router.get("/", (req, res) => {
     return res.status(400).json({ error: "Subject is required" });
   }
 
-  // Normalize
   subject = decodeURIComponent(subject)
-    .toLowerCase()
     .replace(/\+/g, " ")
+    .toLowerCase()
     .trim();
 
   const subjects = {
     "clinical chemistry": "ClinicalChemistry.json",
     "clinical microscopy": "ClinicalMicroscopy.json",
-    "ibss": "IBSS.json",
-    "hematology": "Hematology.json",
+    ibss: "IBSS.json",
+    hematology: "Hematology.json",
     "medtech laws": "MedtechLaws.json",
-    "microbiology": "Microbiology.json",
+    microbiology: "Microbiology.json",
   };
 
   const fileName = subjects[subject];
-
   if (!fileName) {
-    return res.status(404).json({
-      error: "Subject not found",
-      received: subject,
-    });
+    return res.status(404).json({ error: "Subject not found", received: subject });
   }
 
   const filePath = path.join(JSON_DIR, fileName);
 
-  res.sendFile(filePath, (err) => {
-    if (err) {
-      console.error(err);
-      res.status(500).json({ error: "Failed to load questions" });
-    }
-  });
-});
+  if (!fs.existsSync(filePath)) {
+    return res.status(500).json({
+      error: "JSON file missing in production",
+      file: fileName,
+    });
+  }
 
+  res.sendFile(filePath);
+});
 
 module.exports = router;

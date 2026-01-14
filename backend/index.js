@@ -2,12 +2,18 @@ const express = require("express");
 const cors = require("cors");
 const dotenv = require("dotenv");
 const questionsRouter = require("./routes/data");
+const path = require("path");
+
+// Use path.join to get the folder path
+const JSON_DIR = path.join(__dirname, "json"); // <-- correct
+
+
 
 dotenv.config();
 const app = express();
 
 const FRONTEND_ORIGINS = process.env.ALLOWED_ORIGINS?.split(",") || [
-  "http://localhost:5173",
+  "http://localhost:5174",
 ];
 
 app.use(cors({ origin: FRONTEND_ORIGINS, credentials: true }));
@@ -20,10 +26,12 @@ app.get("/", (req, res) => {
 
 // Use the questions router
 app.use("/questions", questionsRouter);
+app.use("/data", express.static(JSON_DIR));
+
 
 // Start locally if not serverless
 
-const PORT = process.env.PORT || 4000;
+const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
     console.log(`Server is running on port ${PORT}`);
 });
